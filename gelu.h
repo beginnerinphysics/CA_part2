@@ -1,0 +1,1 @@
+void gelu_forward_cpu(float* out, const float* inp, int N);
