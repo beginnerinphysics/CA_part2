@@ -16,7 +16,7 @@ void matmul_forward_cpu(float* out, //這裡的matmul單純是把inp和W, b相�
                     for(int j = jj ; j < min(OC,block_oc+j); j = j + 1){
                         r = 0;
                         for(int k = kk; k < min(C,k+blcok_c); k = k + 1){
-                            r = r + inp[i][k] * weight[k][j] + bias[k];
+                            r = r + inp[i][k] * weight[j][k] + bias[k];
                         }
                     }
                 }
