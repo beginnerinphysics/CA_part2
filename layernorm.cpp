@@ -14,13 +14,13 @@ void layernorm_forward_cpu(float* out, const float* inp, const float* weight, co
         
         
         for (int channel = 0; channel < C; channel++) {// cal sigma
-            float val = inp[t * C + channel] - mu;
+            float val = inp[token * C + channel] - mu;
             sigma += val * val;
         }
 //        sigma = sqrt(sigma / C); //cal this when we need a number which is not squre sigma
-        sigma = sqrt(sigma / C + EPSILON)
-        for (int channel = 0; channel < C; channel++) {///needfix: gamma and beta not define
-            out[token * C + channel] = (inp[token * C + channel] - mu) / sigma * weight[c] + bias[c];
+        sigma = sqrt(sigma / C + EPSILON);
+        for (int channel = 0; channel < C; channel++) {
+            out[token * C + channel] = (inp[token * C + channel] - mu) / sigma * weight[channel] + bias[channel];
         }
     }
 }
