@@ -1,11 +1,12 @@
 #include <math.h>
 #include <iostream>
+using namespace std;
 void attention_forward_cpu(float* out, const float* inp, int T, int C, int NH) {
 //看main.cpp可以了解到, 此func對應的是第19頁的attention一個小塊, 而非MHSA block, 而前一個blockmatmul已經使channel變成3倍的長度
 //multihead會降低的是每個head看的維度, 切塊後每個head看的token數量是不變的
-//注意!!T會比H大
-using namespace std;
+    const float SQRTH = sqrt(H)
     int H = C / NH;
+
     for(int head = 0;head < NH;head = head + 1){
         const float *inp_q =  inp + head * H;
 		const float *inp_k =  inp + C + head * H;
@@ -18,7 +19,7 @@ using namespace std;
                 for(int k = 0;k < H;k = k + 1){
                     r[j] = r[j] + inp_q[i * C * 3 + k] * inp_k[j * C * 3 + k];//如果用3就無法scale up, 希望不是大問題, 另外要注意轉置的問題, 畫圖會幫助理解
                 }
-                r[j] = exp(r[j] / sqrt(H));//H is 8
+                r[j] = exp(r[j] / SQRTH);
                 rsoftmax = rsoftmax + r[j];
             }//Q K multiply done already
             for(int j = 0; j < T; j = j + 1){
@@ -34,5 +35,5 @@ using namespace std;
         
     }
 }
-//全部的3都是因為QKV, 如果像是matmul一樣測資有OC=4C的話, 會無法用argument 去 scale up
+
 
