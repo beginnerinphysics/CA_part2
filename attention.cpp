@@ -12,16 +12,22 @@ using namespace std;
         float r[T][T] = {0};
         float rsoftmax[T] = {0};
         for(int i = 0; i < T; i = i + 1){
+            float max_val = 0;
             for(int j = 0; j < T; j = j + 1){
                 for(int k = 0;k < H;k = k + 1){
                     r[i][j] = r[i][j] + inp_qkv[i * C * 3 + k] * inp_qkv[C + j * C * 3 + k];//如果用3就無法scale up, 希望不是大問題, 另外要注意轉置的問題, 畫圖會幫助理解
                 }
-                r[i][j] = exp(r[i][j] / sqrt(H));
-                rsoftmax[i] = rsoftmax[i] + r[i][j];
+                r[i][j] = r[i][j] / sqrt(H);//H is 8
+                max_val = fmax(max_val, r[i][j]);
+                
             }
             for(int j = 0; j < T; j = j + 1){
-                r[i][j] = r[i][j] / rsoftmax[i];
+                r[i][j] = exp(r[i][j] - max_val);
+                rsoftmax[i] = rsoftmax[i] + r[i][j];
             }//Q and K have done already
+            for(int j = 0; j < T; j = j + 1){
+                r[i][j] = r[i][j] / rsoftmax[i];
+            }
             
             for(int j = 0; j < H; j = j + 1){
                 float o = 0;
@@ -36,4 +42,3 @@ using namespace std;
 }
 //全部的3都是因為QKV, 如果像是matmul一樣測資有OC=4C的話, 會無法用argument 去 scale up
 
-//注意！！！！不能
