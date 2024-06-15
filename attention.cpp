@@ -4,7 +4,7 @@ void attention_forward_cpu(float* out, const float* inp, int T, int C, int NH) {
 using namespace std;
     for(int head = 0;head < NH;head = head + 1){
         int H = C / NH;
-        const float *input =  inp + head * H;
+        float *input =  inp + head * H;
         float *out_qkv = out + head*H;
         float r[T][T] = {0};
         float MAX[T] = {0};
