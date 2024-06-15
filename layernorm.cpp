@@ -1,7 +1,7 @@
 #include "math.h"
 #include "layernorm.h"
 using namespace std;
-const float EPSILON = 1e-5;
+float EPSILON = 1e-5;
 void layernorm_forward_cpu(float* out, const float* inp, const float* weight, const float* bias,
                        int T, int C) {
     float mu[T] = {0}
