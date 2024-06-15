@@ -14,14 +14,14 @@ using namespace std;
                 for(int k = 0;k < H;k = k + 1){
                     r[i][j] = r[i][j] + input[i * C * 3 + k] * input[C + j * C * 3 + k];
                 }
-                r[i][j] = r[i][j] / sqrt(H);//H is 8
+                r[i][j] = r[i][j] / sqrt(H);
                 max_val = max(max_val, r[i][j]);
                 
             }
             for(int j = 0; j < T; j = j + 1){
                 r[i][j] = exp(r[i][j] - max_val);
                 MAX[i] = MAX[i] + r[i][j];
-            }//Q and K have done already
+            }
             for(int j = 0; j < T; j = j + 1){
                 r[i][j] = r[i][j] / MAX[i];
             }
