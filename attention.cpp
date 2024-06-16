@@ -15,10 +15,9 @@ void attention_forward_cpu(float* out, const float* inp, int T, int C, int NH) {
         for(int i = 0; i < T; i = i + 1){
             float *out_qkv = out_qkv_b + i * C;
             const float *inp_q = bias + i * OC;
-    
-            double rsoftmax = 0.0;
-			double r[T] = {0.0};
-			double maxvalue = -INFINITY;
+            float rsoftmax = 0.0;
+			float r[T] = {0.0};
+			float maxvalue = -INFINITY;
 			const float *inp_b_k = bias + C;
             for(int j = 0; j < T; j = j + 1){
                 const float *inp_k = inp_b_k + j * OC;
@@ -30,14 +29,13 @@ void attention_forward_cpu(float* out, const float* inp, int T, int C, int NH) {
             }
             for(int j = 0; j < T; j = j + 1){
             
-//                r[j] = exp(r[j] * SQRTH );
-            
-                rsoftmax = rsoftmax + exp(r[j]-maxvalue);
+                r[j] = exp(r[j]-maxvalue);
+                rsoftmax = rsoftmax + r[j];
 //                cerr <<"now j and rsoftmax is "<<j <<"and"<< rsoftmax<<endl;
             }
             for(int j = 0; j < T; j = j + 1){
              
-                r[j] = exp(r[j]-maxvalue) / rsoftmax;
+                r[j] = r[j] / rsoftmax;
 /*                              
                                 if (isnan(r[j]) ) {
                 cerr << "Error: rsoftmax prob" << rsoftmax <<"and r[j] is"<< r[j] <<"and j is" << j << endl;
@@ -53,8 +51,6 @@ void attention_forward_cpu(float* out, const float* inp, int T, int C, int NH) {
 				}
 				out_qkv[j] = o;
 			}
-            
         }
-        
     }
 }
